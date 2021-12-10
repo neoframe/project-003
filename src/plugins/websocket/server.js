@@ -38,6 +38,12 @@ export default class WebSocketServer {
     return this;
   }
 
+  once (...args) {
+    this.events.once(...args);
+
+    return this;
+  }
+
   off (...args) {
     this.events.off(...args);
 

@@ -12,7 +12,9 @@ const App = () => {
   const onSubmit = e => {
     e.preventDefault();
 
+    globalThis.sessionStorage.setItem('username', inputRef.current.value);
     globalThis.localStorage.setItem('username', inputRef.current.value);
+
     setReady(true);
     Game();
   };
@@ -21,7 +23,10 @@ const App = () => {
     <div className="app">
       <form onSubmit={onSubmit} className="login-form">
         <input
-          value={globalThis.localStorage.getItem('username')}
+          value={
+            globalThis.sessionStorage.getItem('username') ||
+            globalThis.localStorage.getItem('username')
+          }
           ref={inputRef}
           type="text"
           placeholder="USERNAME"

@@ -50,6 +50,18 @@ class Store {
       getAll: (...args) => this.getAll(...args, { zone: name }),
     };
   }
+
+  allZones () {
+    const zones = Object.keys(this.#data);
+
+    return {
+      get: (...args) => zones.map(k => this.get(...args, { zone: k })),
+      set: (...args) => zones.map(k => this.set(...args, { zone: k })),
+      patch: (...args) => zones.map(k => this.patch(...args, { zone: k })),
+      delete: (...args) => zones.map(k => this.delete(...args, { zone: k })),
+      getAll: (...args) => zones.map(k => this.getAll(...args, { zone: k })),
+    };
+  }
 }
 
 module.exports = Store;

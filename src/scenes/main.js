@@ -1,17 +1,21 @@
 import { Scene, Cameras } from 'phaser';
 
+import { SERVER_URL, ZOOM } from '../utils/settings';
 import Map from '../objects/map';
 import Player from '../objects/player';
-import { SERVER_URL, ZOOM } from '../utils/settings';
+import Enemies from '../objects/enemies';
 
 export default class MainScene extends Scene {
   constructor () {
     super({ key: 'MainScene' });
+    this.username = globalThis.sessionStorage.getItem('username') ||
+      globalThis.localStorage.getItem('username');
   }
 
   preload () {
     this.player = new Player(this);
     this.map = new Map(this, this.player);
+    this.enemies = new Enemies(this, this.player, this.map);
   }
 
   create () {
@@ -21,6 +25,7 @@ export default class MainScene extends Scene {
     this.cameras.main.startFollow(this.player, true).setZoom(ZOOM);
 
     this.map.create();
+    this.enemies.create();
 
     this.map.events.once('startPosition', ({ x, y }) => {
       this.player.setPosition(x, y);
@@ -38,6 +43,12 @@ export default class MainScene extends Scene {
     this.player.setDepth(this.map.getPlayerDepth());
     this.cameras.main
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
+
+    this.server.send('player-init', {
+      username: this.username,
+      x: this.player.x,
+      y: this.player.y,
+    }, { zone: this.map.id });
 
     this.map.events.once('goTo', mapId => {
       if (this.map.hasMap(mapId)) {

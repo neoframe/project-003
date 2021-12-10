@@ -22,6 +22,8 @@ class Server {
       this.#events[event].push(handler);
     });
 
+    console.log(this.#events);
+
     return this;
   }
 
