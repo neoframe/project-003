@@ -1,0 +1,49 @@
+{
+  "name": "project-003",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/neoframe/project-003.git",
+  "author": "dackmin <ugo@poool.fr>",
+  "scripts": {
+    "serve": "node ./script/serve.js",
+    "serve:client": "webpack serve --config ./webpack.config.js",
+    "serve:server": "nodemon --watch ./server --exec node ./server/index.js"
+  },
+  "dependencies": {
+    "core-js": "3.19.3",
+    "phaser": "3.55.2",
+    "phaser3-rex-plugins": "1.1.64",
+    "preact": "10.6.4",
+    "uuid": "8.3.2",
+    "ws": "8.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.16.0",
+    "@babel/eslint-parser": "7.16.3",
+    "@babel/eslint-plugin": "7.14.5",
+    "@babel/preset-env": "7.16.4",
+    "@babel/preset-react": "7.16.0",
+    "@poool/eslint-config": "1.5.0",
+    "@poool/eslint-config-react": "1.5.1",
+    "@poool/eslint-plugin": "1.5.0",
+    "autoprefixer": "10.4.0",
+    "babel-loader": "8.2.3",
+    "css-loader": "6.5.1",
+    "eslint": "8.4.1",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "5.2.0",
+    "eslint-plugin-react": "7.27.1",
+    "html-webpack-plugin": "5.5.0",
+    "nodemon": "2.0.15",
+    "postcss": "8.4.4",
+    "postcss-loader": "6.2.1",
+    "sass": "^1.44.0",
+    "sass-loader": "^12.4.0",
+    "style-loader": "3.3.1",
+    "webpack": "5.65.0",
+    "webpack-cli": "4.9.1",
+    "webpack-dev-server": "4.6.0"
+  }
+}
