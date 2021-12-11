@@ -14,23 +14,35 @@ export default class Player extends GameObjects.Sprite {
   constructor (scene, ...args) {
     super(scene, ...args);
 
-    scene.load.spritesheet('player', charset, {
+    scene.load.spritesheet('charset', charset, {
       frameWidth: 64,
       frameHeight: 128,
     });
   }
 
   create () {
-    this.setTexture('player', 0);
+    this.setTexture('charset', 0);
     this.scene.physics.add.existing(this);
     this.scene.add.existing(this);
-    this.setDepth(10000);
+    this.body.setSize(64, 64);
+    this.setScale(0.5);
 
     // Init keys
     this.scene.cursors = this.scene.input.keyboard.createCursorKeys();
     ['z', 'q', 's', 'd'].forEach(k => {
       this.scene.cursors[k] = this.scene.input.keyboard
         .addKey(Input.Keyboard.KeyCodes[k.toUpperCase()]);
+    });
+
+    // Init anims
+    this.anims.create({
+      key: 'player-walking',
+      frames: this.anims.generateFrameNumbers('charset', {
+        start: 1,
+        end: 4,
+      }),
+      frameRate: 5,
+      repeat: -1,
     });
 
     this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
@@ -51,13 +63,17 @@ export default class Player extends GameObjects.Sprite {
     this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
   }
 
-  determinePointerAngle () {
+  determinePointerAngle (pointer) {
+    pointer = pointer || this.scene.input.activePointer;
+    pointer.updateWorldPoint(this.scene.cameras.main);
+
     this.pointerAngle = PMath.Angle.Between(
       this.x,
       this.y,
-      this.scene.input.activePointer.worldX,
-      this.scene.input.activePointer.worldY,
-    );
+      pointer.worldX,
+      pointer.worldY,
+    ) + (Math.PI / 2);
+
     this.pointerAngleDeg = PMath.RadToDeg(this.pointerAngle);
     this.setRotation(this.pointerAngle);
   }
@@ -90,6 +106,17 @@ export default class Player extends GameObjects.Sprite {
     } else {
       this.body.setVelocityY(0);
     }
+
+    if (this.isMoving()) {
+      this.anims.play('player-walking', true);
+    } else {
+      this.anims.stop();
+      this.setTexture('charset', 0);
+    }
+  }
+
+  isMoving () {
+    return this.body.velocity.x !== 0 || this.body.velocity.y !== 0;
   }
 
   shouldSendUpdate () {

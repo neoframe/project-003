@@ -22,7 +22,8 @@ export default class MainScene extends Scene {
     this.server = this.webSocket.add(SERVER_URL);
     this.player.create();
 
-    this.cameras.main.startFollow(this.player, true).setZoom(ZOOM);
+    this.cameras.main.startFollow(this.player, false).setZoom(ZOOM);
+    this.input.setPollAlways();
 
     this.map.create();
     this.enemies.create();
@@ -40,7 +41,7 @@ export default class MainScene extends Scene {
   }
 
   onMapReady () {
-    this.player.setDepth(this.map.getPlayerDepth());
+    this.player.setDepth(this.map.getPlayerDepth() || Infinity);
     this.cameras.main
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
 

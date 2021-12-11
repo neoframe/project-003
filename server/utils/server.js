@@ -22,8 +22,6 @@ class Server {
       this.#events[event].push(handler);
     });
 
-    console.log(this.#events);
-
     return this;
   }
 
@@ -88,7 +86,7 @@ class Server {
   start ({ port } = {}) {
     this.#ws = new WebSocketServer({ port }, () => {
       // eslint-disable-next-line no-console
-      console.log('Websocket server listening on port', port);
+      console.log('[WS] Server listening on port', port);
     });
 
     this.#ws.on('connection', client => {
@@ -107,7 +105,7 @@ class Server {
       });
 
       // eslint-disable-next-line no-console
-      console.log('Client connected', client.id);
+      console.log('[WS] Client connected ->', client.id);
     });
 
     return this;
