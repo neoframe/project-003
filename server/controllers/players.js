@@ -23,6 +23,7 @@ const initPlayer = req => {
     id: req.client.id,
     x: req.data.x,
     y: req.data.y,
+    angle: 0,
     username: req.data.username,
   });
 };

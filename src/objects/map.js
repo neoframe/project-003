@@ -54,7 +54,7 @@ export default class Map {
     this.tilemap.layers.forEach(l => {
       const layer = this.tilemap
         .createLayer(l.name, this.tilesets, 0, 0)
-        .setDepth(this.getProperty(l.properties, 'depth'));
+        .setDepth(this.getProperty(l.properties, 'depth') ?? 1);
       this.initCollisions(layer, options);
 
       this.layers.push(layer);

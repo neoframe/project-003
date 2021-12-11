@@ -1,17 +1,30 @@
-import { Events, GameObjects, Input } from 'phaser';
+import { Events, GameObjects, Input, Math as PMath } from 'phaser';
 
 import { PLAYER_SPEED } from '../utils/settings';
+
+import charset from '../assets/images/charset.png';
 
 export default class Player extends GameObjects.Sprite {
   events = new Events.EventEmitter();
   #canMove = true;
   #life = 100;
   #maxLife = 100;
+  #previousRender = {};
+
+  constructor (scene, ...args) {
+    super(scene, ...args);
+
+    scene.load.spritesheet('player', charset, {
+      frameWidth: 64,
+      frameHeight: 128,
+    });
+  }
 
   create () {
-    this.setSize(32, 64);
+    this.setTexture('player', 0);
     this.scene.physics.add.existing(this);
     this.scene.add.existing(this);
+    this.setDepth(10000);
 
     // Init keys
     this.scene.cursors = this.scene.input.keyboard.createCursorKeys();
@@ -20,10 +33,33 @@ export default class Player extends GameObjects.Sprite {
         .addKey(Input.Keyboard.KeyCodes[k.toUpperCase()]);
     });
 
+    this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
   }
 
   update () {
     this.move();
+    this.determinePointerAngle();
+
+    if (this.shouldSendUpdate()) {
+      this.scene.server.send('player-move', {
+        x: this.x,
+        y: this.y,
+        angle: this.pointerAngle,
+      }, { zone: this.map.id });
+    }
+
+    this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
+  }
+
+  determinePointerAngle () {
+    this.pointerAngle = PMath.Angle.Between(
+      this.x,
+      this.y,
+      this.scene.input.activePointer.worldX,
+      this.scene.input.activePointer.worldY,
+    );
+    this.pointerAngleDeg = PMath.RadToDeg(this.pointerAngle);
+    this.setRotation(this.pointerAngle);
   }
 
   move () {
@@ -54,13 +90,16 @@ export default class Player extends GameObjects.Sprite {
     } else {
       this.body.setVelocityY(0);
     }
+  }
 
-    if (this.body.velocity.x !== 0 || this.body.velocity.y !== 0) {
-      this.scene.server.send('player-move', {
-        x: this.x,
-        y: this.y,
-      }, { zone: this.map.id });
-    }
+  shouldSendUpdate () {
+    const { x, y, angle } = this.#previousRender;
+
+    return (
+      this.x !== x ||
+      this.y !== y ||
+      this.pointerAngle !== angle
+    );
   }
 
   getLife () {

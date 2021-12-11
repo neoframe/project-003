@@ -56,6 +56,12 @@
          "name":"player",
          "objects":[],
          "opacity":1,
+         "properties":[
+                {
+                 "name":"depth",
+                 "type":"int",
+                 "value":4
+                }],
          "type":"objectgroup",
          "visible":true,
          "x":0,

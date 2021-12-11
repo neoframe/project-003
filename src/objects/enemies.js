@@ -16,9 +16,10 @@ export default class Enemies {
       this.addEnemy(enemy);
     });
 
-    this.scene.server.on('player-move', ({ id, x, y }) => {
+    this.scene.server.on('player-move', ({ id, x, y, angle }) => {
       const enemy_ = this.enemies.getMatching('id', id)[0];
       enemy_.setPosition(x, y);
+      enemy_.setRotation(angle);
     });
 
     this.scene.server.on('player-disconnect', ({ id }) => {
