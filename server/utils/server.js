@@ -9,6 +9,12 @@ class Server {
   #routes = {};
   #events = {};
 
+  constructor ({ port, debug = false, verbose = false } = {}) {
+    this.port = port;
+    this.debug = debug;
+    this.verbose = verbose;
+  }
+
   addStore (name) {
     this.#stores[name] = new Store(name);
 
@@ -34,6 +40,7 @@ class Server {
   #createRequest (params = {}) {
     return {
       ...params,
+      server: this,
       zone: params.client?.zone,
       stores: this.#stores,
       broadcast: this.#broadcast.bind(this, params.client),
@@ -47,7 +54,7 @@ class Server {
     const message = JSON.stringify({ type, data });
 
     // eslint-disable-next-line no-console
-    console.log('[WS] Broadcasting ->', message);
+    this.verbose && console.log('[WS] Broadcasting ->', message);
 
     this.#ws.clients.forEach(c => {
       if (client.id !== c.id && c.readyState === c.OPEN) {
@@ -61,7 +68,7 @@ class Server {
 
     if (client.readyState === client.OPEN) {
       // eslint-disable-next-line no-console
-      console.log('[WS] Sending ->', message);
+      this.verbose && console.log('[WS] Sending ->', message);
 
       client.send(message);
     }
@@ -73,7 +80,8 @@ class Server {
     if (!route) return;
 
     // eslint-disable-next-line no-console
-    console.log('[WS] Requesting ->', type, JSON.stringify(data));
+    this.verbose && console.log(
+      '[WS] Requesting ->', type, JSON.stringify(data));
 
     route(this.#createRequest({
       client,
@@ -83,10 +91,10 @@ class Server {
     }));
   }
 
-  start ({ port } = {}) {
-    this.#ws = new WebSocketServer({ port }, () => {
+  start () {
+    this.#ws = new WebSocketServer({ port: this.port }, () => {
       // eslint-disable-next-line no-console
-      console.log('[WS] Server listening on port', port);
+      this.debug && console.log('[WS] Server listening on port', this.port);
     });
 
     this.#ws.on('connection', client => {
@@ -101,11 +109,11 @@ class Server {
       client.on('close', () => {
         this.#fireEvent(client, 'disconnect');
         // eslint-disable-next-line no-console
-        console.log('[WS] Client disconnected ->', client.id);
+        this.debug && console.log('[WS] Client disconnected ->', client.id);
       });
 
       // eslint-disable-next-line no-console
-      console.log('[WS] Client connected ->', client.id);
+      this.debug && console.log('[WS] Client connected ->', client.id);
     });
 
     return this;

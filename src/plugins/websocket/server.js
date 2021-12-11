@@ -1,5 +1,7 @@
 import { Events } from 'phaser';
 
+import { DEBUG } from '../../utils/settings';
+
 export default class WebSocketServer {
   events = new Events.EventEmitter();
   queue = [];
@@ -17,7 +19,7 @@ export default class WebSocketServer {
 
   onOpen () {
     // eslint-disable-next-line no-console
-    console.log('[WS] Connected');
+    DEBUG && console.log('[WS] Connected');
 
     this.queue.forEach(q => this.ws.send(q));
     this.queue = [];
@@ -26,7 +28,7 @@ export default class WebSocketServer {
 
   onMessage (event) {
     // eslint-disable-next-line no-console
-    console.log('[WS] Received ->', event.data);
+    DEBUG && console.log('[WS] Received ->', event.data);
 
     const { type, data } = JSON.parse(event.data);
     this.events.emit(type, data);
@@ -54,7 +56,7 @@ export default class WebSocketServer {
     const message = JSON.stringify({ type, zone, data });
 
     // eslint-disable-next-line no-console
-    console.log('[WS] Sending ->', message);
+    DEBUG && console.log('[WS] Sending ->', message);
 
     if (this.ws.readyState === this.ws.OPEN) {
       this.ws.send(message);

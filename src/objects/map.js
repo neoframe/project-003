@@ -7,7 +7,6 @@ export default class Map {
   events = new Events.EventEmitter();
   tilesets = [];
   layers = [];
-  obstacles = [];
   actions = [];
   startPositions = [];
   playerDepth = 0;
@@ -26,15 +25,15 @@ export default class Map {
     });
   }
 
-  create () {}
+  create () {
+    this.obstacles = this.scene.add.group();
+  }
 
   reset () {
-    // [...this.obstacles, ...this.actions]
-    //   .forEach(o => o.destroy());
+    this.obstacles.clear();
     this.tilemap?.destroy();
     this.tilesets = [];
     this.layers = [];
-    this.obstacles = [];
     this.actions = [];
     this.startPositions = [];
   }
@@ -81,7 +80,7 @@ export default class Map {
     ) {
       layer.setCollisionByExclusion([-1]);
       this.scene.physics.add.collider(this.player, layer);
-      this.obstacles.push(layer);
+      this.obstacles.add(layer);
     }
   }
 

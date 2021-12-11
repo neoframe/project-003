@@ -28,7 +28,11 @@ class Store {
   }
 
   patch (key, value, opts = {}) {
-    this.#getZone(opts).set(key, { ...(this.get(key, opts) || {}), ...value });
+    const current = this.get(key, opts) || {};
+    this.#getZone(opts).set(key, {
+      ...current,
+      ...(typeof value === 'function' ? value(current) : value),
+    });
   }
 
   delete (key, opts = {}) {

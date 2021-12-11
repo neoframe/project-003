@@ -1,6 +1,7 @@
 import { Events, GameObjects, Input, Math as PMath } from 'phaser';
 
 import { PLAYER_SPEED } from '../utils/settings';
+import Bullets from './bullets';
 
 import charset from '../assets/images/charset.png';
 
@@ -13,6 +14,8 @@ export default class Player extends GameObjects.Sprite {
 
   constructor (scene, ...args) {
     super(scene, ...args);
+
+    this.bullets = new Bullets(scene, this);
 
     scene.load.spritesheet('charset', charset, {
       frameWidth: 64,
@@ -27,6 +30,8 @@ export default class Player extends GameObjects.Sprite {
     this.body.setSize(64, 64);
     this.setScale(0.5);
 
+    this.scene.input.setPollAlways();
+
     // Init keys
     this.scene.cursors = this.scene.input.keyboard.createCursorKeys();
     ['z', 'q', 's', 'd'].forEach(k => {
@@ -34,12 +39,15 @@ export default class Player extends GameObjects.Sprite {
         .addKey(Input.Keyboard.KeyCodes[k.toUpperCase()]);
     });
 
+    this.scene.input.on('pointerdown', this.fire, this);
+    this.bullets.init();
+
     // Init anims
     this.anims.create({
       key: 'player-walking',
       frames: this.anims.generateFrameNumbers('charset', {
         start: 1,
-        end: 4,
+        end: 3,
       }),
       frameRate: 5,
       repeat: -1,
@@ -63,6 +71,16 @@ export default class Player extends GameObjects.Sprite {
     this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
   }
 
+  onMapReady () {
+    this.bullets.addCollider(this.map.obstacles);
+    this.scene.server.send('player-init', {
+      username: this.scene.username,
+      x: this.x,
+      y: this.y,
+      life: this.#life,
+    }, { zone: this.map.id });
+  }
+
   determinePointerAngle (pointer) {
     pointer = pointer || this.scene.input.activePointer;
     pointer.updateWorldPoint(this.scene.cameras.main);
@@ -74,7 +92,7 @@ export default class Player extends GameObjects.Sprite {
       pointer.worldY,
     ) + (Math.PI / 2);
 
-    this.pointerAngleDeg = PMath.RadToDeg(this.pointerAngle);
+    this.pointerAngleDeg = PMath.RadToDeg(this.pointerAngle) - 90;
     this.setRotation(this.pointerAngle);
   }
 
@@ -135,5 +153,10 @@ export default class Player extends GameObjects.Sprite {
 
   getMaxLife () {
     return this.#maxLife;
+  }
+
+  fire () {
+    this.scene.server.send('player-shoot', {}, { zone: this.map.id });
+    this.bullets.fire(this.pointerAngleDeg);
   }
 }

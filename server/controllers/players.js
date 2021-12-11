@@ -4,6 +4,7 @@ const initPlayer = req => {
     angle: 0,
     x: req.data.x,
     y: req.data.y,
+    life: req.data.life,
     username: req.data.username,
   });
 
@@ -63,11 +64,44 @@ const removePlayer = req => {
   });
 };
 
+const shootPlayer = req => {
+  const player = req.stores.players.zone(req).get(req.client.id);
+
+  req.broadcast('player-shoot', {
+    id: req.client.id,
+    x: player.x,
+    y: player.y,
+    angle: player.angle,
+  });
+};
+
+const hitPlayer = req => {
+  const player = req.stores.players.zone(req).get(req.data.id) || { life: 0 };
+  player.life = Math.max(0, player.life - (req.data.damage ?? 20));
+
+  req.stores.players.zone(req).patch(req.data.id, {
+    life: player.life,
+  });
+
+  if (player.life === 0) {
+    req.send('player-dead', {
+      id: req.data.id,
+    });
+
+    req.broadcast('player-killed', {
+      id: req.data.id,
+      killer: req.client.id,
+    });
+  }
+};
+
 module.exports = {
   routes: {
     'player-init': initPlayer,
     'player-move': movePlayer,
     'player-stop': stopPlayer,
+    'player-shoot': shootPlayer,
+    'player-hit': hitPlayer,
   },
   on: {
     disconnect: removePlayer,

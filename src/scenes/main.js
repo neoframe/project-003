@@ -23,7 +23,6 @@ export default class MainScene extends Scene {
     this.player.create();
 
     this.cameras.main.startFollow(this.player, false).setZoom(ZOOM);
-    this.input.setPollAlways();
 
     this.map.create();
     this.enemies.create();
@@ -45,11 +44,7 @@ export default class MainScene extends Scene {
     this.cameras.main
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
 
-    this.server.send('player-init', {
-      username: this.username,
-      x: this.player.x,
-      y: this.player.y,
-    }, { zone: this.map.id });
+    this.player.onMapReady();
 
     this.map.events.once('goTo', mapId => {
       if (this.map.hasMap(mapId)) {
