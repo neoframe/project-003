@@ -1,6 +1,7 @@
 const { WebSocketServer } = require('ws');
 const { v4: uuid } = require('uuid');
 
+const { version } = require('../../package.json');
 const Store = require('./store');
 
 class Server {
@@ -9,10 +10,22 @@ class Server {
   #routes = {};
   #events = {};
 
-  constructor ({ port, debug = false, verbose = false } = {}) {
+  constructor ({ port, name, debug = false, verbose = false } = {}) {
     this.port = port;
+    this.name = name;
     this.debug = debug;
     this.verbose = verbose;
+
+    this.addController({
+      routes: {
+        ping: ({ req }) => req.send('pong'),
+        info: ({ req }) => req.send({
+          name: this.name,
+          port: this.port,
+          version,
+        }),
+      },
+    });
   }
 
   addStore (name) {
