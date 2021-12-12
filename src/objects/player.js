@@ -155,6 +155,10 @@ export default class Player extends GameObjects.Sprite {
     return this.#maxLife;
   }
 
+  die () {
+    this.#life = this.#maxLife;
+  }
+
   fire () {
     this.scene.server.send('player-shoot', {}, { zone: this.map.id });
     this.bullets.fire(this.pointerAngleDeg);

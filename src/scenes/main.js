@@ -39,12 +39,18 @@ export default class MainScene extends Scene {
     this.player.update();
   }
 
+  onPlayerDies () {
+    this.goTo('dust');
+    this.player.die();
+  }
+
   onMapReady () {
     this.player.setDepth(this.map.getPlayerDepth() || Infinity);
     this.cameras.main
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
 
     this.player.onMapReady();
+    this.server.once('player-dead', this.onPlayerDies, this);
 
     this.map.events.once('goTo', mapId => {
       if (this.map.hasMap(mapId)) {

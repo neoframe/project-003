@@ -9,6 +9,7 @@ export default class Map {
   layers = [];
   actions = [];
   startPositions = [];
+  colliders = [];
   playerDepth = 0;
 
   constructor (scene, player) {
@@ -30,9 +31,12 @@ export default class Map {
   }
 
   reset () {
+    this.colliders.forEach(c => c.destroy());
     this.obstacles.clear();
     this.tilemap?.destroy();
+
     this.tilesets = [];
+    this.colliders = [];
     this.layers = [];
     this.actions = [];
     this.startPositions = [];
@@ -79,8 +83,9 @@ export default class Map {
       this.getProperty(layer.layer.properties, 'collides') === true
     ) {
       layer.setCollisionByExclusion([-1]);
-      this.scene.physics.add.collider(this.player, layer);
+      const collider = this.scene.physics.add.collider(this.player, layer);
       this.obstacles.add(layer);
+      this.colliders.push(collider);
     }
   }
 

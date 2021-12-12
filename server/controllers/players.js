@@ -86,12 +86,17 @@ const hitPlayer = req => {
   if (player.life === 0) {
     req.send('player-dead', {
       id: req.data.id,
+    }, { to: req.data.id });
+
+    req.send('player-killed', {
+      id: req.data.id,
+      killer: req.client.id,
     });
 
     req.broadcast('player-killed', {
       id: req.data.id,
       killer: req.client.id,
-    });
+    }, { exclude: [req.data.id] });
   }
 };
 

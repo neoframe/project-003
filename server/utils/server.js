@@ -48,7 +48,15 @@ class Server {
     };
   }
 
-  #broadcast (client, type, data) {
+  #getClient (id) {
+    for (const client of this.#ws.clients) {
+      if (client.id === id) {
+        return client;
+      }
+    }
+  }
+
+  #broadcast (client, type, data, { exclude = [] } = {}) {
     if (!client) return;
 
     const message = JSON.stringify({ type, data });
@@ -57,14 +65,26 @@ class Server {
     this.verbose && console.log('[WS] Broadcasting ->', message);
 
     this.#ws.clients.forEach(c => {
-      if (client.id !== c.id && c.readyState === c.OPEN) {
+      if (
+        client.id !== c.id &&
+        c.readyState === c.OPEN &&
+        !exclude.includes(c.id)
+      ) {
         c.send(message);
       }
     });
   }
 
-  #send (client, type, data) {
+  #send (client, type, data, { to } = {}) {
     const message = JSON.stringify({ type, data });
+
+    if (to) {
+      client = this.#getClient(to);
+
+      if (!client) {
+        return false;
+      }
+    }
 
     if (client.readyState === client.OPEN) {
       // eslint-disable-next-line no-console
