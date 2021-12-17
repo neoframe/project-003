@@ -32,7 +32,7 @@ export default class MainScene extends Scene {
     });
 
     this.map.init('dust');
-    this.onMapReady();
+    this.onMapReady('dust');
 
     this.scene.launch('HUDScene');
   }
@@ -46,12 +46,14 @@ export default class MainScene extends Scene {
     this.player.die();
   }
 
-  onMapReady () {
+  onMapReady (id) {
     this.player.setDepth(this.map.getPlayerDepth() || Infinity);
     this.cameras.main
       .setBounds(0, 0, this.map.getWidth(), this.map.getHeight());
 
     this.player.onMapReady();
+
+    this.server.setZone(id);
     this.server.once('player-dead', this.onPlayerDies, this);
 
     this.map.events.once('goTo', mapId => {
@@ -62,7 +64,7 @@ export default class MainScene extends Scene {
 
     this.cameras.main.fadeIn(500);
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
-      this.events.emit('mapready');
+      this.events.emit('mapready', id);
     });
   }
 
@@ -74,7 +76,7 @@ export default class MainScene extends Scene {
     this.cameras.main.fadeOut(500);
     this.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       this.map.init(mapId, { from: !ignoreFrom && this.map.id });
-      this.onMapReady();
+      this.onMapReady(mapId);
     });
   }
 }

@@ -5,6 +5,7 @@ import { DEBUG } from '../../utils/settings';
 export default class WebSocketServer {
   events = new Events.EventEmitter();
   queue = [];
+  defaultZone = null;
 
   constructor (scene, url) {
     this.scene = scene;
@@ -52,7 +53,12 @@ export default class WebSocketServer {
     return this;
   }
 
-  send (type, data, { zone } = {}) {
+  setZone (zone) {
+    this.defaultZone = zone;
+  }
+
+  send (type, data = {}, { zone } = {}) {
+    zone = zone || this.defaultZone;
     const message = JSON.stringify({ type, zone, data });
 
     // eslint-disable-next-line no-console

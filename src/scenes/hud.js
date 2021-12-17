@@ -1,8 +1,10 @@
 import ReactDOM from 'react-dom';
+import { createRef } from 'react';
 import { Scene } from 'phaser';
 
 import Messenger from '../ui/Messenger';
 import Kills from '../ui/Kills';
+import Leaderboard from '../ui/Leaderboard';
 
 export default class HUD extends Scene {
   constructor () {
@@ -10,6 +12,9 @@ export default class HUD extends Scene {
   }
 
   create () {
+    this.server = this.scene.get('MainScene').server;
+    this.username = this.scene.get('MainScene').username;
+
     this.messenger = this.add
       .dom(20, this.cameras.main.height - 20, 'div',
         'width: 500px; height: 200px;')
@@ -17,8 +22,8 @@ export default class HUD extends Scene {
 
     ReactDOM.render((
       <Messenger
-        server={this.scene.get('MainScene').server}
-        username={this.scene.get('MainScene').username}
+        server={this.server}
+        username={this.username}
         onFocus={this.onMessengerFocus.bind(this)}
         onBlur={this.onMessengerBlur.bind(this)}
       />
@@ -27,14 +32,36 @@ export default class HUD extends Scene {
     this.kills = this.add
       .dom(20, this.cameras.main.height / 2,
         'div', 'width: 500px; height: 300px; pointer-events: none;')
-      .setDepth(10000).setOrigin(0, 1).setActive(false);
+      .setDepth(10000).setOrigin(0, 1);
 
     ReactDOM.render((
-      <Kills
-        server={this.scene.get('MainScene').server}
-        username={this.scene.get('MainScene').username}
-      />
+      <Kills server={this.server} username={this.username} />
     ), this.kills.node);
+
+    this.leaderboard = this.add
+      .dom(this.cameras.main.centerX, 20, 'div', 'width: 500px; height: 300px;')
+      .setDepth(10000).setOrigin(0.5, 0);
+
+    const leaderboardRef = createRef();
+
+    ReactDOM.render((
+      <Leaderboard
+        ref={leaderboardRef}
+        server={this.server}
+        username={this.username}
+      />
+    ), this.leaderboard.node);
+
+    this.input.keyboard.on('keydown-TAB', e => {
+      e.preventDefault();
+      this.server.send('leaderboard');
+      leaderboardRef.current.show();
+    });
+
+    this.input.keyboard.on('keyup-TAB', e => {
+      e.preventDefault();
+      leaderboardRef.current.hide();
+    });
   }
 
   update () {

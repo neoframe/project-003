@@ -7,8 +7,6 @@ const initPlayer = req => {
     y: req.data.y,
     life: req.data.life,
     username: req.data.username,
-    deaths: 0,
-    kills: 0,
   });
 
   req.send('map-players', {
@@ -96,11 +94,11 @@ const hitPlayer = req => {
     }, { to: req.data.id });
 
     req.stores.players.zone(req).patch(killer.id, {
-      kills: killer.kills + 1,
+      kills: (killer.kills || 0) + 1,
     });
 
     req.stores.players.zone(req).patch(player.id, {
-      deaths: player.deaths + 1,
+      deaths: (player.deaths || 0) + 1,
     });
 
     const payload = {
