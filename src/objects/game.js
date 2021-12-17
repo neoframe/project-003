@@ -45,4 +45,10 @@ export default () => new Game({
   dom: {
     createContainer: true,
   },
+  callbacks: {
+    postBoot: game => {
+      game.domContainer.style.pointerEvents = 'none!important';
+      game.domContainer.className = 'ui';
+    },
+  },
 });

@@ -1,7 +1,8 @@
 import ReactDOM from 'react-dom';
 import { Scene } from 'phaser';
 
-import Messenger from '../components/Messenger';
+import Messenger from '../ui/Messenger';
+import Kills from '../ui/Kills';
 
 export default class HUD extends Scene {
   constructor () {
@@ -22,14 +23,28 @@ export default class HUD extends Scene {
         onBlur={this.onMessengerBlur.bind(this)}
       />
     ), this.messenger.node);
+
+    this.kills = this.add
+      .dom(20, this.cameras.main.height / 2,
+        'div', 'width: 500px; height: 300px; pointer-events: none;')
+      .setDepth(10000).setOrigin(0, 1).setActive(false);
+
+    ReactDOM.render((
+      <Kills
+        server={this.scene.get('MainScene').server}
+        username={this.scene.get('MainScene').username}
+      />
+    ), this.kills.node);
   }
 
   update () {
     this.messenger.setPosition(20, this.cameras.main.height - 20);
+    this.kills.setPosition(20, this.cameras.main.height / 2);
   }
 
   destroy () {
     ReactDOM.unmountComponentAtNode(this.messenger.node);
+    ReactDOM.unmountComponentAtNode(this.kills.node);
   }
 
   onMessengerFocus () {

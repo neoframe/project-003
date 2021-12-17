@@ -1,11 +1,14 @@
 const initPlayer = req => {
   req.stores.players.zone(req).patch(req.client.id, {
+    id: req.client.id,
     moving: false,
     angle: 0,
     x: req.data.x,
     y: req.data.y,
     life: req.data.life,
     username: req.data.username,
+    deaths: 0,
+    kills: 0,
   });
 
   req.send('map-players', {
@@ -84,19 +87,31 @@ const hitPlayer = req => {
   });
 
   if (player.life === 0) {
+    const killer = req.stores.players.zone(req).get(req.client.id);
+
     req.send('player-dead', {
       id: req.data.id,
+      username: player.username,
+      killerUsername: killer.username,
     }, { to: req.data.id });
 
-    req.send('player-killed', {
-      id: req.data.id,
-      killer: req.client.id,
+    req.stores.players.zone(req).patch(killer.id, {
+      kills: killer.kills + 1,
     });
 
-    req.broadcast('player-killed', {
+    req.stores.players.zone(req).patch(player.id, {
+      deaths: player.deaths + 1,
+    });
+
+    const payload = {
       id: req.data.id,
+      username: player.username,
       killer: req.client.id,
-    }, { exclude: [req.data.id] });
+      killerUsername: killer.username,
+    };
+
+    req.send('player-killed', payload);
+    req.broadcast('player-killed', payload, { exclude: [req.data.id] });
   }
 };
 
