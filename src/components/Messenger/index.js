@@ -1,5 +1,6 @@
 import { useReducer, useRef, useEffect } from 'react';
 import { classNames, mockState } from '@poool/junipero-utils';
+import { useInterval } from '@poool/junipero-hooks';
 import { v4 as uuid } from 'uuid';
 
 import styles from './index.module.sass';
@@ -27,12 +28,18 @@ export default ({ username, server, onFocus, onBlur }) => {
       messagesListRef.current.scrollHeight + 200;
   }, [state.nonce]);
 
+  useInterval(() => {
+    state.messages = state.messages
+      .filter(m => Date.now() - m.createdAt < 60000);
+    dispatch({ messages: state.messages });
+  }, 1000, []);
+
   const onMessage = ({ sender, message }) => {
     if (state.messages.length > 100) {
       state.messages.shift();
     }
 
-    state.messages.push({ sender, message });
+    state.messages.push({ sender, message, createdAt: Date.now() });
     dispatch({ messages: state.messages, nonce: uuid() });
   };
 

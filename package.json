@@ -10,6 +10,7 @@
     "serve:server": "nodemon --watch ./server --exec node ./server/index.js"
   },
   "dependencies": {
+    "@poool/junipero-hooks": "2.0.0-rc.15",
     "@poool/junipero-utils": "2.0.0-rc.15",
     "core-js": "3.19.3",
     "phaser": "3.55.2",
