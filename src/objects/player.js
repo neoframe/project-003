@@ -54,6 +54,9 @@ export default class Player extends GameObjects.Sprite {
     });
 
     this.#previousRender = { x: this.x, y: this.y, angle: this.pointerAngle };
+
+    this.scene.game.events.on('messenger-focus', this.onMessengerFocus, this);
+    this.scene.game.events.on('messenger-blur', this.onMessengerBlur, this);
   }
 
   update () {
@@ -162,5 +165,13 @@ export default class Player extends GameObjects.Sprite {
   fire () {
     this.scene.server.send('player-shoot', {}, { zone: this.map.id });
     this.bullets.fire(this.pointerAngleDeg);
+  }
+
+  onMessengerFocus () {
+    this.#canMove = false;
+  }
+
+  onMessengerBlur () {
+    this.#canMove = true;
   }
 }

@@ -30,7 +30,7 @@ class Bullet extends GameObjects.Sprite {
   }
 
   destroy () {
-    this.body.world.off('worldbounds');
+    this.body?.world.off('worldbounds');
     super.destroy();
   }
 }

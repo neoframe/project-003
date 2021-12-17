@@ -905,6 +905,14 @@
     "@babel/plugin-transform-react-jsx-development" "^7.16.0"
     "@babel/plugin-transform-react-pure-annotations" "^7.16.0"
 
+"@babel/runtime-corejs3@7.15.4":
+  version "7.15.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.15.4.tgz#403139af262b9a6e8f9ba04a6fdcebf8de692bf1"
+  integrity sha512-lWcAqKeB624/twtTc3w6w/2o9RqJPaNBhPGK6DKLSiwuVWC7WFkypWyNg+CpZoyJH0jVzv1uMtXZ/5/lQOLtCg==
+  dependencies:
+    core-js-pure "^3.16.0"
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.8.4":
   version "7.16.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
@@ -1015,6 +1023,14 @@
   integrity sha512-RZo6PzIWHF7KWL+aT4qmp2OOM0LSb/eMeZKPVBwgjNpOs42ZQIg2fLeRM7wx1hrBpFkLO+LgF6XLsE9EgoiAEg==
   dependencies:
     eslint-rule-composer "0.3.0"
+
+"@poool/junipero-utils@2.0.0-rc.15":
+  version "2.0.0-rc.15"
+  resolved "https://registry.yarnpkg.com/@poool/junipero-utils/-/junipero-utils-2.0.0-rc.15.tgz#2f74d7d64337dfec3b859df76539e138dd4f7db0"
+  integrity sha512-ah+52XpxclMQtLAhjRKMIxG8aKEy5APAcPpRPMLrGiHCQo45VAGERPhuZq1wpj6j4LXtDNQVBhQ8v/Xm2PjECw==
+  dependencies:
+    "@babel/runtime-corejs3" "7.15.4"
+    core-js "3.18.3"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -1826,6 +1842,16 @@ core-js-compat@^3.18.0, core-js-compat@^3.19.1:
   dependencies:
     browserslist "^4.18.1"
     semver "7.0.0"
+
+core-js-pure@^3.16.0:
+  version "3.20.0"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.20.0.tgz#7253feccf8bb05b72c153ddccdbe391ddbffbe03"
+  integrity sha512-qsrbIwWSEEYOM7z616jAVgwhuDDtPLwZSpUsU3vyUkHYqKTf/uwOJBZg2V7lMurYWkpVlaVOxBrfX0Q3ppvjfg==
+
+core-js@3.18.3:
+  version "3.18.3"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.18.3.tgz#86a0bba2d8ec3df860fefcc07a8d119779f01509"
+  integrity sha512-tReEhtMReZaPFVw7dajMx0vlsz3oOb8ajgPoHVYGxr8ErnZ6PcYEvvmjGmXlfpnxpkYSdOQttjB+MvVbCGfvLw==
 
 core-js@3.19.3:
   version "3.19.3"

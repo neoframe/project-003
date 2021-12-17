@@ -1,12 +1,14 @@
 import { Game, Scale, AUTO } from 'phaser';
 
 import { DEBUG } from '../utils/settings';
-import MainScene from '../scenes/main';
 import WebSocketPlugin from '../plugins/websocket';
+import MainScene from '../scenes/main';
+import HUDScene from '../scenes/hud';
 
 export default () => new Game({
   type: AUTO,
   backgroundColor: 0x000000,
+  parent: 'body',
   physics: {
     default: 'arcade',
     matter: {
@@ -34,10 +36,13 @@ export default () => new Game({
   antialias: false,
   antialiasGL: false,
   pixelArt: true,
-  scene: [MainScene],
+  scene: [MainScene, HUDScene],
   plugins: {
     scene: [
       { key: 'webSocketPlugin', plugin: WebSocketPlugin, mapping: 'webSocket' },
     ],
+  },
+  dom: {
+    createContainer: true,
   },
 });

@@ -33,6 +33,8 @@ export default class MainScene extends Scene {
 
     this.map.init('dust');
     this.onMapReady();
+
+    this.scene.launch('HUDScene');
   }
 
   update () {
